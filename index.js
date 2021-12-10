@@ -9,7 +9,7 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URL = process.env.REDIRECT_URL;
 
-console.log(process.env.CLIENT_SECRET);
+// console.log(process.env.CLIENT_SECRET);
 app.get("/", (req, res) => {
   const data = { name: "jayin" };
 
@@ -74,6 +74,19 @@ app.get("/callback", (req, res) => {
           .then((response) => {
             // res.send(JSON.stringify(response.data));
             // res.json(response.data);
+            res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
+          })
+          .catch((error) => {
+            res.send(error);
+          });
+
+        const { refresh_token } = response.data;
+
+        axios
+          .get(
+            `http://localhost:8080/refresh_token?refresh_token=${refresh_token}`
+          )
+          .then((response) => {
             res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
           })
           .catch((error) => {
