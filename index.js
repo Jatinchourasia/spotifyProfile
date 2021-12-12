@@ -64,36 +64,45 @@ app.get("/callback", (req, res) => {
   })
     .then((response) => {
       if (response.status === 200) {
-        const { access_token, token_type } = response.data;
-        axios
-          .get("https://api.spotify.com/v1/me", {
-            headers: {
-              Authorization: `${token_type} ${access_token}`,
-            },
-          })
-          .then((response) => {
-            // res.send(JSON.stringify(response.data));
-            // res.json(response.data);
-            res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
-          })
-          .catch((error) => {
-            res.send(error);
-          });
+        const { access_token, token_type, refresh_token } = response.data;
 
-        const { refresh_token } = response.data;
+        // redirect to react app
+        // padd along token in query param
+        const queryParams = querystring.stringify({
+          access_token,
+          refresh_token,
+        });
 
-        axios
-          .get(
-            `http://localhost:8080/refresh_token?refresh_token=${refresh_token}`
-          )
-          .then((response) => {
-            res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
-          })
-          .catch((error) => {
-            res.send(error);
-          });
+        res.redirect(`http://localhost:3000/?${queryParams}`);
+
+        // axios
+        //   .get("https://api.spotify.com/v1/me", {
+        //     headers: {
+        //       Authorization: `${token_type} ${access_token}`,
+        //     },
+        //   })
+        //   .then((response) => {
+        //     // res.send(JSON.stringify(response.data));
+        //     // res.json(response.data);
+        //     res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
+        //   })
+        //   .catch((error) => {
+        //     res.send(error);
+        //   });
+
+        // axios
+        //   .get(
+        //     `http://localhost:8080/refresh_token?refresh_token=${refresh_token}`
+        //   )
+        //   .then((response) => {
+        //     res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
+        //   })
+        //   .catch((error) => {
+        //     res.send(error);
+        //   });
       } else {
         res.send(responses);
+        res.redirect(`/?${querystring.stringify({ error: "invalid token" })}`);
       }
     })
     .catch((error) => {
