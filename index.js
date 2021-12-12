@@ -64,13 +64,14 @@ app.get("/callback", (req, res) => {
   })
     .then((response) => {
       if (response.status === 200) {
-        const { access_token, token_type, refresh_token } = response.data;
+        const { access_token, expires_in, refresh_token } = response.data;
 
         // redirect to react app
         // padd along token in query param
         const queryParams = querystring.stringify({
           access_token,
           refresh_token,
+          expires_in,
         });
 
         res.redirect(`http://localhost:3000/?${queryParams}`);

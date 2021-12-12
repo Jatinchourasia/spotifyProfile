@@ -1,21 +1,28 @@
 import logo from "./logo.svg";
 import "./App.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  accessToken,
+  getCurrentUserProfile,
+  logout,
+} from "./components/spotify";
 
 function App() {
+  const [token, setToken] = useState(null);
+  const [profile, setProfile] = useState(null);
   useEffect(() => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const accessToken = urlParams.get("access_token");
-    const refreshToken = urlParams.get("refresh_token");
-    console.log(accessToken);
-    console.log(refreshToken);
-    if (refreshToken) {
-      fetch(`/refresh_token?refresh_token=${refreshToken}`)
-        .then((res) => res.json())
-        .then((data) => console.log(data))
-        .catch((err) => console.log(err));
-    }
+    setToken(accessToken);
+    const fetchUserData = async () => {
+      try {
+        const { data } = await getCurrentUserProfile();
+        setProfile(data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchUserData();
+
+    console.log(profile);
   }, []);
 
   return (
@@ -25,14 +32,20 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="http://localhost:8080/login"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {!token ? (
+          <a
+            className="App-link"
+            href="http://localhost:8080/login"
+            rel="noopener noreferrer"
+          >
+            Login
+          </a>
+        ) : (
+          <div className="">
+            {profile && <h1>{profile.display_name} you are loggedIn</h1>}
+            <h2 onClick={logout}>Logout</h2>
+          </div>
+        )}
       </header>
     </div>
   );
