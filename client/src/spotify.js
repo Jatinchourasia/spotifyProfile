@@ -98,11 +98,78 @@ const getAccessToken = () => {
 
 export const accessToken = getAccessToken();
 
-// AXIOS global HEaders
-axios.defaults.baseURL = "https://api.spotify.com/v1";
-axios.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
-axios.defaults.headers["Content-Type"] = "application/json";
-
 // API CALlS
 
-export const getCurrentUserProfile = () => axios.get("/me");
+// AXIOS global HEaders
+const headers = {
+  Authorization: `Bearer ${accessToken}`,
+  "Content-Type": "application/json",
+};
+
+// get User
+export const getUser = () =>
+  axios.get("https://api.spotify.com/v1/me", { headers });
+// following artist
+export const getFollowing = () =>
+  axios.get("https://api.spotify.com/v1/me/following?type=artist", { headers });
+
+// recently played
+export const getRecentlyPlayed = () =>
+  axios.get("https://api.spotify.com/v1/me/player/recently-played", {
+    headers,
+  });
+// playlist
+export const getPlaylists = () =>
+  axios.get("https://api.spotify.com/v1/me/playlists", { headers });
+
+// top artist
+
+// last  month
+
+export const getTopArtistsShort = () =>
+  axios.get(
+    "https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term",
+    {
+      headers,
+    }
+  );
+
+// last 6 month
+
+export const getTopArtistsMedium = () =>
+  axios.get(
+    "https://api.spotify.com/v1/me/top/artists?limit=50&time_range=medium_term",
+    {
+      headers,
+    }
+  );
+// All time
+
+export const getTopArtistsLong = () =>
+  axios.get(
+    "https://api.spotify.com/v1/me/top/artists?limit=50&time_range=long_term",
+    { headers }
+  );
+
+// top tracks
+// last month
+export const getTopTracksShort = () =>
+  axios.get(
+    "https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=short_term",
+    { headers }
+  );
+// last 6 month
+
+export const getTopTracksMedium = () =>
+  axios.get(
+    "https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=medium_term",
+    {
+      headers,
+    }
+  );
+// All time
+export const getTopTracksLong = () =>
+  axios.get(
+    "https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term",
+    { headers }
+  );
